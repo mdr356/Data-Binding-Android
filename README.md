@@ -93,9 +93,10 @@ Data Binding is done declaratively rather than programmatically. Inside the XML 
 
 These variable **welcomeMsg** and **btnTitle**, are connected with the view and any changes to them from the **MainViewModel** class would be reflected in the view.**
 
-@{} syntax is used in the assignment expression.
+**@{}** syntax is used in the assignment expression.
 ### Two-way data binding
 *android:onClick="@{() -> viewmodel.btnClicked()}"*
+
 Data Binding is able to Receive data changes, and listen to user updates/inputs.
 
 ## Data Binding | Activity

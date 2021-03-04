@@ -54,8 +54,10 @@ class MainViewModel : ViewModel() {
 }
 ```
 
+Using LiveData to notify the UI about data changes.
+
  ## Data Binding | XML
-Data Binding is done declaratively rather than programmatically. Inside the XML file we add the layout tag as the parent ViewHolder, add the <data> tag with the variables containing that whill provide data to the view of our choice.
+Data Binding is done declaratively rather than programmatically. Inside the XML file we add the **<layout>** tag as the parent view, add the **<data>** tag with **<variable>** being a child view, containing the Data source. In our case the source is *MainViewModel*.
 
 **main_activity.xml**
     
@@ -89,15 +91,17 @@ Data Binding is done declaratively rather than programmatically. Inside the XML 
 *android:text="@{viewmodel.welcomeMsg}"*
 *android:text="@{viewmodel.btnTitle}"*
 
-**These variable welcomeMsg, btnTitle, are connected with the view and any changes would be reflected in the view.**
+These variable **welcomeMsg** and **btnTitle**, are connected with the view and any changes to them from the **MainViewModel** class would be reflected in the view.**
 
+@{} syntax is used in the assignment expression.
 ### Two-way data binding
 *android:onClick="@{() -> viewmodel.btnClicked()}"*
 Data Binding is able to Receive data changes, and listen to user updates/inputs.
 
 ## Data Binding | Activity
-```kotlin
+With Data Binding, there is no need to use *findViewById<>*. A binding class is generated for the layout file *main_activity.xml* maps to *MainActivityBinding::class.java* and we inform the Activity of the UI as seen below.
 
+```kotlin
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -114,4 +118,41 @@ class MainActivity : AppCompatActivity() {
     }
     ...
 }
+```
+Note: The ViewModel is instantiate and passed to the binding class.
+
+## Data Binding | Fragment
+There are two options with Fragments 
+Option #1
+```kotlin
+class FirstFragment : Fragment() {
+
+    private lateinit var binding : FragmentFirstBinding
+    
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_first, container, false)
+        
+        binding.viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        return binding.root
+    }
+```
+
+Option #2
+```kotlin
+class FirstFragment : Fragment() {
+
+    private lateinit var binding : FragmentFirstBinding
+    
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentFirstBinding.inflate(layoutInflater)
+
+        binding.viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        return binding.root
+    }
 ```

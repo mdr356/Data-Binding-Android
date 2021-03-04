@@ -32,8 +32,33 @@ i.e:
 
 The generated class, holds all the bindings from the layout properties
 
- ## Data Binding | Activity
- Data Binding is done declaratively rather than programmatically. Inside the XML file we add the layout tag as the parent ViewHolder, add the <data> tag with the variables containing that whill provide data to the view of our choice.
+## ViewModel
+We are using a viewmodel as the data holder, and it will be use to populate the UI.
+```kotlin
+class MainViewModel : ViewModel() {
+    var welcomeMsg : MutableLiveData<String> = MutableLiveData()
+    var btnTitle  : MutableLiveData<String> = MutableLiveData()
+
+    init {
+        setMessage()
+    }
+
+    private fun setMessage() {
+        welcomeMsg.value = "Welcome"
+        btnTitle.value = "Click Me"
+    }
+
+    fun btnClicked() {
+        Log.d("MainViewModel", "Button Clicked")
+    }
+}
+```
+
+ ## Data Binding | XML
+Data Binding is done declaratively rather than programmatically. Inside the XML file we add the layout tag as the parent ViewHolder, add the <data> tag with the variables containing that whill provide data to the view of our choice.
+
+**main_activity.xml**
+    
 ```kotlin
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -60,4 +85,33 @@ The generated class, holds all the bindings from the layout properties
         />
 </LinearLayout>
 ```
-## Data Binding | Fragment
+### Binding
+*android:text="@{viewmodel.welcomeMsg}"*
+*android:text="@{viewmodel.btnTitle}"*
+
+**These variable welcomeMsg, btnTitle, are connected with the view and any changes would be reflected in the view.**
+
+### Two-way data binding
+*android:onClick="@{() -> viewmodel.btnClicked()}"*
+Data Binding is able to Receive data changes, and listen to user updates/inputs.
+
+## Data Binding | Activity
+```kotlin
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        binding = DataBindingUtil.setContentView(
+             this, R.layout.activity_main)
+
+         setSupportActionBar(binding.toolbar)
+         binding.viewmodel = ViewModelProvider(this).get(MainViewModel::class.java);
+        
+    }
+    ...
+}
+```
